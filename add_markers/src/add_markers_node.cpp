@@ -151,7 +151,7 @@ int main(int argc, char** argv){
     ros::init(argc, argv, "add_markers_node");
     HomeService hs;
     if ( hs.run() ){
-        ROS_INFO("Mission complete!");
+        ROS_INFO("Object picked, hiding marker!");
     } else {
         ROS_INFO("Mission failed");
     }
