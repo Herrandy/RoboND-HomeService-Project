@@ -3,10 +3,10 @@
 
 int main( int argc, char** argv )
 {
-  ros::init(argc, argv, "basic_shapes");
-  ros::NodeHandle n; 	
-  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-	 ros::Rate r(0.2);
+	ros::init(argc, argv, "basic_shapes");
+	ros::NodeHandle n;
+	ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+	ros::Rate r(0.2);
 	// Set our initial shape type to be a cube
 	uint32_t shape = visualization_msgs::Marker::CUBE;
 	visualization_msgs::Marker marker;
@@ -37,23 +37,18 @@ int main( int argc, char** argv )
 	marker.color.b = 0.0f;
 	marker.color.a = 1.0;
 	marker.lifetime = ros::Duration(5.0);
-  while (marker_pub.getNumSubscribers() < 1)
-  {
-      if (!ros::ok())
-      {
-        return 0;
-      }
-      ROS_WARN_ONCE("Please create a subscriber to the marker");
-      r.sleep();
-  }
-
-
-
+	while (marker_pub.getNumSubscribers() < 1)
+	{
+		if (!ros::ok())
+		{
+			return 0;
+		}
+		ROS_WARN_ONCE("Please create a subscriber to the marker");
+		r.sleep();
+	}
 	marker_pub.publish(marker);
-	// sleep 10 seconds, marker should be shown 5 seconds		
+	// sleep 10 seconds, marker should be shown 5 seconds
 	ros::Duration(10).sleep();
-	
-
 	// drop off place
 	marker.id = 1;
 	marker.header.stamp = ros::Time::now();
