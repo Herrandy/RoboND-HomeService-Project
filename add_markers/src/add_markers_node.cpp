@@ -100,7 +100,7 @@ public:
                                (pick_up_loc_.y - robot_pose.y) +
                                (pick_up_loc_.z - robot_pose.z));
             ROS_INFO("Current distance between goal and robot: %f", dist);
-            if ( dist < 0.6 ) {
+            if ( dist < 0.65 ) {
                 ROS_INFO("Goal reached!");
                 ros::Duration(1).sleep();
                 pick_up_marker.action = visualization_msgs::Marker::DELETE;
@@ -134,15 +134,6 @@ private:
 
 
 };
-
-
-
-
-
-
-
-
-
 
 
 int main(int argc, char** argv){

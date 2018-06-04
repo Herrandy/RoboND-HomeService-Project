@@ -2,7 +2,8 @@
 
 if [ -z "$1" ]
   then
-    echo "Please, give the absolute path to catkin_ws folder as an argument"
+    echo "Please, give the absolute path to catkin_ws folder as an argument."
+    exit 1
 fi
 
 catkin_ws_root=$1
