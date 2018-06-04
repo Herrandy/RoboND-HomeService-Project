@@ -29,7 +29,7 @@ public:
         pick_up_loc_.z = 0.0;
         drop_off_loc_.x = -3.5f;
         drop_off_loc_.y = 5;
-        drop_off_loc_.z = 5;
+        drop_off_loc_.z = 0.0;
         ROS_INFO("Initialization done!");
     }
 
@@ -91,31 +91,46 @@ public:
         marker_pub_.publish(pick_up_marker);
         ros::Time starting_time = ros::Time::now();
         ros::Rate r(20);
+        bool current_state = 1;
+
+        Vec3 goal_loc = pick_up_loc_;
         while (ros::ok()) {
             pose_lock_.lock();
             geometry_msgs::Point robot_pose = robot_pose_;
             pose_lock_.unlock();
             /// check if pick up pose reached
-            double dist = sqrt((pick_up_loc_.x - robot_pose.x) +
-                               (pick_up_loc_.y - robot_pose.y) +
-                               (pick_up_loc_.z - robot_pose.z));
+            double dist = sqrt((goal_loc.x - robot_pose.x)*(goal_loc.x - robot_pose.x) +
+                               (goal_loc.y - robot_pose.y)*(goal_loc.y - robot_pose.y) +
+                               (goal_loc.z - robot_pose.z)*(goal_loc.z - robot_pose.z));
             ROS_INFO("Current distance between goal and robot: %f", dist);
             if ( dist < 0.65 ) {
                 ROS_INFO("Goal reached!");
-                ros::Duration(1).sleep();
+                ros::Duration(3).sleep();
                 pick_up_marker.action = visualization_msgs::Marker::DELETE;
                 marker_pub_.publish(pick_up_marker);
-                return true;
+
+                if (current_state == 0)
+                    break;
+
+                goal_loc = drop_off_loc_;
+                starting_time = ros::Time::now();
+                current_state = 0;
             }
 
-            if (ros::Time::now().toSec() - starting_time.toSec() > 40 ){
-                ROS_INFO("40 seconds passed, goal not reached!");
-                break;
+            if (ros::Time::now().toSec() - starting_time.toSec() > 50 ){
+                ROS_INFO("50 seconds passed, goal not reached!");
+                return false;
             }
             ros::spinOnce();
             r.sleep();
         }
-        return false;
+
+        visualization_msgs::Marker drop_of_marker = create_cube_marker(drop_off_loc_);
+        drop_of_marker.lifetime = ros::Duration(60*60);
+        marker_pub_.publish(drop_of_marker);
+        ros::spinOnce();
+        r.sleep();
+        return true;
     }
 
 
